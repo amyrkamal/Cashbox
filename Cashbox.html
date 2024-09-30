@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)file:///home/echo/Studio/Lab/cashboxPaper/app2.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cashbox</title>
+</head>
+<body>
+
+    <style>
+        body {
+            display: flex;
+            margin: auto;
+            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+            background-image: radial-gradient(circle at 0% 0%, #373b52, #252736 51%, #1d1e26);
+            height: 100vh;
+            width: 100vw;
+        }
+        form {
+            margin: auto;
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+        }
+        input {
+            margin: 8px auto;
+            height: 40px;
+            border-radius: 5px 5px 0 0;
+            border: 0;
+            outline: none;
+            padding: 2px 20px;
+            background-color: rgb(52,59,79);
+            border-bottom: 1px solid white;
+            width: 500px;
+            color: white;   
+        }
+        input::placeholder {
+            color: white;
+        }
+        button {
+            width: 400px;
+            height: 40px;
+            margin: 8px auto;
+            border-radius: 5px;
+            outline: none;
+            border: none;
+        }
+        .basic{
+            text-align: center;
+        }
+        .basic_basic{
+            display: flex;
+            text-align: center;
+        }
+        .basic_basic >*{
+            width:100%;
+            margin: auto auto 0px auto;
+            
+        }
+ 
+        
+
+        #invoice{
+            width: 88mm;
+            height: auto;
+            display: none;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 20px 0;
+        }
+
+        #invoice >*{
+     
+         
+        }
+        @media print {
+            body {
+                margin: 0; /* Remove margins for print */
+            }
+            #invoice {
+                display: block; /* Show the invoice */
+                border: none; /* Remove border in print */
+                width: 88mm; /* Set width for the receipt */
+                height: auto; /* Adjust height as needed */
+                font-size: 25px; /* Adjust font size as needed */
+            }
+            input, button {
+                display: none; /* Hide input fields and button during print */
+            }
+        }
+    </style>
+
+    <form id="theForm">
+        <input name="name" type="text" id="cashierName" placeholder="Name">
+        <input name="account" type="text" id="accountUsed" placeholder="Account Name">
+        <input name="date" type="date" id="date" placeholder="Date">
+        <hr>
+        <input name="cashbox_dollar" type="text" id="cashbox_Dollar" class="digitize" placeholder="Dollar">
+        <input name="cashbox_dinar" type="text" id="cashbox_Dinar" class="digitize" placeholder="Dinar">
+        <input name="dollar_exchange_rate" type="text" id="dollarPrice" class="digitize" placeholder="Dollar Price">
+        <hr>
+        <input name="system_dollar" type="text" id="system_dollar" class="digitize" placeholder="Dollar">
+        <input name="system_dinar" type="text" id="system_dinar" class="digitize" placeholder="Dinar">   
+        
+        <button id="submit" type="submit" value="submit">Print</button>
+    </form>
+
+    <div id="invoice">
+        <div class="basic">
+            <div class="basic_basic">
+            <h4>Amyr</h4>
+            <h2>/</h2>
+            <h4>Aldar</h4>
+            </div>
+            <h4 style="letter-spacing: 0.1cap;">29/9/2024</h4>
+        </div>
+        <hr>
+        <div class="cashbox">
+            <p>Cashbox:</p>
+            <h4>Dollar: 200</h4>
+            <h4>Dinnar: 2,000,000</h4>
+            <h4>Total : 2300000</h4>
+        </div>
+        <hr>
+        <div class="system">
+            <p>System</p>
+            <h4>Dollar:200</h4>
+            <h4>Dinar: 2,029,999</h4>
+        </div>
+        <hr>
+        <div class="result">
+            <p>Delta</p>
+            <h4>Difference</h4>
+        </div>
+    </div>
+
+    <script>
+        let formData = {};
+
+        document.querySelector("#submit").addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Capture values
+            formData.name = this.parentElement.children[0].value;
+            formData.account = this.parentElement.children[1].value;
+            formData.date = this.parentElement.children[2].value;
+
+            // Get numeric values without commas
+            formData.cashDollar = Number(this.parentElement.children[4].value.replace(/,/g, ''));
+            formData.cashDinar = Number(this.parentElement.children[5].value.replace(/,/g, ''));
+            formData.dollarPrice = Number(this.parentElement.children[6].value.replace(/,/g, ''));
+            formData.cashTotal = formData.cashDollar*formData.dollarPrice+formData.cashDinar;
+
+            formData.systemDollar = Number(this.parentElement.children[8].value.replace(/,/g, ''));
+            formData.systemDinar = Number(this.parentElement.children[9].value.replace(/,/g, ''));
+            formData.systemTotal = formData.systemDollar*formData.dollarPrice+formData.systemDinar;
+
+            formData.delta= formData.cashTotal-formData.systemTotal
+
+            const invoice = document.getElementById('invoice');
+            invoice.style.display = 'block';
+            // Open the print dialog
+            window.print();
+        });
+
+        // Set default date
+        document.getElementById('date').value = new Date().toISOString().split('T')[0];   
+
+        // Function to format input with commas as thousand separators
+        function formatNumber(input) {
+            let value = input.value.replace(/\D/g, ''); // Remove non-digits
+            input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas
+        }
+
+        // Select all inputs with the class 'digitize'
+        document.querySelectorAll('.digitize').forEach(function(input) {
+            // Add event listener to each input
+            input.addEventListener('input', function() {
+                formatNumber(input); // Format number on input event
+            });
+        }); 
+    </script>
+
+
+</body></html>
